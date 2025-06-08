@@ -21,7 +21,7 @@ class DetailsViewModel(
     private val _uiState = MutableStateFlow<DetailsUiState>(DetailsUiState.Loading)
     val uiState: StateFlow<DetailsUiState> = _uiState
 
-    private val countryName: String = savedStateHandle["countryName"] ?: ""
+    private val countryName: String = savedStateHandle["countryName"] ?: "" //TODO - looks MTS
 
     init {
         fetchCountryDetails(
@@ -34,7 +34,7 @@ class DetailsViewModel(
     ) {
         viewModelScope.launch(ioDispatcher) {
             when(val response = getCountryDetailsUseCase.execute(countryName)) {
-                is NetworkResult.Error ->  {
+                is NetworkResult.Error ->  { //TODO - combine the error and exception
                     _uiState.value = DetailsUiState.Error(response.message ?: "Unknown error")
                 }
                 is NetworkResult.Exception ->  {

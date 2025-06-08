@@ -45,5 +45,6 @@ fun CountryFlagItem(
                 .height(80.dp),
             contentScale = ContentScale.Crop
         )
+        // TODO Error maybe show a default image - loading state put a circular indicator
     }
 }

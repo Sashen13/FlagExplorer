@@ -3,6 +3,7 @@ package za.co.sashen13.flagexplorer.data.repository
 import za.co.sashen13.flagexplorer.data.common.wrappers.NetworkResult
 import za.co.sashen13.flagexplorer.data.common.wrappers.handleApi
 import za.co.sashen13.flagexplorer.data.remote.CountryApi
+import za.co.sashen13.flagexplorer.data.remote.response.CountryDetailsResponse
 import za.co.sashen13.flagexplorer.data.remote.response.CountryResponse
 import za.co.sashen13.flagexplorer.domain.repository.CountryRepository
 
@@ -13,7 +14,7 @@ class CountryRepositoryImpl(
         return handleApi {api.getCountries()}
     }
 
-    override suspend fun getCountryDetails(countryName: String): NetworkResult<CountryResponse> {
+    override suspend fun getCountryDetails(countryName: String): NetworkResult<CountryDetailsResponse> {
         return handleApi {api.getCountryDetails(countryName)}
     }
 }

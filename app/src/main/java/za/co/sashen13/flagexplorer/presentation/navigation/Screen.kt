@@ -25,7 +25,7 @@ fun NavGraph(navController: NavHostController) {
             )
         }
         composable(Screen.Detail.route) { backStackEntry ->
-            val countryName = backStackEntry.arguments?.getString("countryName") ?: ""
+            val countryName = backStackEntry.arguments?.getString("countryName") ?: "" //TODO - Remove from here use it from the state
             DetailScreen(
                 countryName,
                 navController,

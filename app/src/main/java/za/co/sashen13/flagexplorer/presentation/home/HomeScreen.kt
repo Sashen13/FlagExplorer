@@ -43,14 +43,14 @@ private fun HomeContent(
     state: HomeUiState,
     navController: NavController
 ) {
-    FlagExplorerScaffold(title = "Flag Explorer") { paddingValues ->
+    FlagExplorerScaffold(title = "Flag Explorer") { paddingValues -> //string resource
         Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
             when (state) {
-                is HomeUiState.Loading -> {
+                is HomeUiState.Loading -> { // move to the scaffold
                     Box(
                         Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -60,7 +60,7 @@ private fun HomeContent(
                 }
 
                 is HomeUiState.Success -> {
-                    val countries = (state as HomeUiState.Success).countries
+                    val countries = state.countries
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
                         modifier = Modifier.padding(8.dp),
@@ -70,20 +70,20 @@ private fun HomeContent(
                     ) {
                         items(countries) { country ->
                             CountryFlagItem(country) {
-                                navController.navigate(Screen.Detail.createRoute(country.name))
+                                navController.navigate(Screen.Detail.createRoute(country.name)) //TODO - move this to the content
                             }
                         }
                     }
                 }
 
                 is HomeUiState.Error -> {
-                    val message = (state as HomeUiState.Error).message
+                    val message = state.message
                     Box(
                         Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            "Failed to load countries: $message",
+                            "Failed to load countries: $message", //string resources
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }

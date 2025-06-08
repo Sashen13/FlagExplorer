@@ -51,7 +51,7 @@ class GetAllCountriesUseCaseTest {
     }
 
     @Test
-    fun `execute returns exception when repository returns exception`() = runTest {
+    fun `execute returns exception when repository returns exception`() = runTest { // remove if combining error and exception
         val exception = RuntimeException("Exception occurred")
         whenever(repository.getCountries()).thenReturn(NetworkResult.Exception(exception))
 

@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import za.co.sashen13.flagexplorer.data.remote.response.CountryResponse
-import za.co.sashen13.flagexplorer.ui.components.image.AnimatedFlagImage
 import za.co.sashen13.flagexplorer.ui.components.scaffold.FlagExplorerScaffold
 
 @Composable
@@ -39,7 +38,8 @@ fun DetailScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    CountryDetailsContent(
+    //TODO - Retries
+    CountryDetailsContent( //TODO - Pass on back here instead of the nav controller
         state = state,
         navController = navController,
         countryName
@@ -47,7 +47,7 @@ fun DetailScreen(
 }
 
 @Composable
-fun CountryDetailsContent(
+private fun CountryDetailsContent(
     state: DetailsUiState,
     navController: NavController,
     countryName: String
@@ -62,14 +62,14 @@ fun CountryDetailsContent(
                 .padding(padding),
             contentAlignment = Alignment.TopCenter
         ) {
-            when (state) {
+            when (state) { // TODO - move the state to the scaffold and ask for the content
                 is DetailsUiState.Loading -> {
                     CircularProgressIndicator()
                 }
 
                 is DetailsUiState.Error -> {
                     Text(
-                        "Error: ${(state as DetailsUiState.Error).message}",
+                        "Error: ${state.message}",
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -84,8 +84,6 @@ fun CountryDetailsContent(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
-                        AnimatedFlagImage(flagUrl = country.flag)
-
                         Text(
                             text = country.name,
                             style = MaterialTheme.typography.headlineMedium,
@@ -94,7 +92,7 @@ fun CountryDetailsContent(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        InfoRow(icon = Icons.Default.LocationOn, label = "Capital", value = country.capital ?: "N/A")
+                        InfoRow(icon = Icons.Default.LocationOn, label = "Capital", value = country.capital ?: "N/A") //TODO -  use string resources
                         InfoRow(icon = Icons.Default.AccountCircle, label = "Population", value = country.population?.toString() ?: "N/A")
                     }
                 }
@@ -104,7 +102,7 @@ fun CountryDetailsContent(
 }
 
 @Composable
-fun InfoRow(icon: ImageVector, label: String, value: String) {
+private fun InfoRow(icon: ImageVector, label: String, value: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -121,7 +119,7 @@ fun InfoRow(icon: ImageVector, label: String, value: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun CountryDetailsContentPreview() {
+private fun CountryDetailsContentPreview() {
     val sampleCountry = CountryResponse(
         name = "Sampleland",
         flag = "https://flagcdn.com/w320/br.svg",

@@ -2,6 +2,7 @@ package za.co.sashen13.flagexplorer.ui.components.scaffold
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -13,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 fun FlagExplorerScaffold(
     title: String,
     modifier: Modifier = Modifier,
-    topBarColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = Color.White,
     onBackClick: (() -> Unit)? = null,
     content: @Composable (paddingValues: PaddingValues) -> Unit
@@ -23,14 +23,14 @@ fun FlagExplorerScaffold(
             TopAppBar(
                 title = { Text(title) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = topBarColor,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = contentColor
                 ),
                 navigationIcon = {
                     onBackClick?.let {
                         IconButton(onClick = it) {
                             Icon(
-                                imageVector = Icons.Default.ArrowBack,
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
                                 tint = contentColor
                             )

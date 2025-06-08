@@ -4,10 +4,12 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import za.co.sashen13.flagexplorer.BuildConfig
 import java.util.concurrent.TimeUnit
 
 class FlagExplorerServiceInstance {
-    private val BASE_URL = "http://10.0.2.2:3000/" //Uses local url for Android emulators
+    //TODO - create buildConfigs for the different endpoints
+    private val BASE_URL = BuildConfig.BASE_URL
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

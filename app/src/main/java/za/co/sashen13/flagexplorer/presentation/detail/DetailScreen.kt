@@ -2,18 +2,19 @@ package za.co.sashen13.flagexplorer.presentation.detail
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,40 +22,43 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import za.co.sashen13.flagexplorer.data.remote.response.CountryResponse
+import za.co.sashen13.flagexplorer.R
+import za.co.sashen13.flagexplorer.data.remote.response.CountryDetailsResponse
 import za.co.sashen13.flagexplorer.ui.components.scaffold.FlagExplorerScaffold
+import za.co.sashen13.flagexplorer.ui.components.rows.InfoRow
 
 @Composable
 fun DetailScreen(
-    countryName: String,
     navController: NavController,
     viewModel: DetailsViewModel
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.screenState.collectAsState()
 
-    //TODO - Retries
-    CountryDetailsContent( //TODO - Pass on back here instead of the nav controller
+    CountryDetailsContent(
         state = state,
-        navController = navController,
-        countryName
+        onBackClicked = {
+            navController.popBackStack()
+        },
+        retryGetCountryDetails = {
+            viewModel.fetchCountryDetails()
+        }
     )
 }
 
 @Composable
 private fun CountryDetailsContent(
-    state: DetailsUiState,
-    navController: NavController,
-    countryName: String
+    state: DetailsScreenState,
+    onBackClicked: () -> Unit = {},
+    retryGetCountryDetails: () -> Unit = {},
 ) {
     FlagExplorerScaffold(
-        title = countryName,
-        onBackClick = { navController.popBackStack() }
+        title = state.countryName,
+        onBackClick = onBackClicked
     ) { padding ->
         Box(
             modifier = Modifier
@@ -62,20 +66,42 @@ private fun CountryDetailsContent(
                 .padding(padding),
             contentAlignment = Alignment.TopCenter
         ) {
-            when (state) { // TODO - move the state to the scaffold and ask for the content
+            when (state.uiState) {
                 is DetailsUiState.Loading -> {
                     CircularProgressIndicator()
                 }
 
                 is DetailsUiState.Error -> {
-                    Text(
-                        "Error: ${state.message}",
-                        color = MaterialTheme.colorScheme.error
-                    )
+                    Box(
+                        Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "Error: ${state.uiState.message}",
+                                color = MaterialTheme.colorScheme.error
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            IconButton(
+                                onClick = retryGetCountryDetails
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Retry",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(100.dp)
+                                )
+                            }
+                        }
+                    }
                 }
 
                 is DetailsUiState.Success -> {
-                    val country = state.country
+                    val country = state.uiState.country
 
                     Column(
                         modifier = Modifier
@@ -92,8 +118,11 @@ private fun CountryDetailsContent(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        InfoRow(icon = Icons.Default.LocationOn, label = "Capital", value = country.capital ?: "N/A") //TODO -  use string resources
-                        InfoRow(icon = Icons.Default.AccountCircle, label = "Population", value = country.population?.toString() ?: "N/A")
+                        InfoRow(icon = Icons.Default.LocationOn,
+                            label = stringResource(R.string.details_row_capital_title), value = country.capital)
+
+                        InfoRow(icon = Icons.Default.AccountCircle,
+                            label = stringResource(R.string.details_row_population_title), value = country.population.toString())
                     }
                 }
             }
@@ -101,37 +130,21 @@ private fun CountryDetailsContent(
     }
 }
 
-@Composable
-private fun InfoRow(icon: ImageVector, label: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(imageVector = icon, contentDescription = null)
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(text = "$label:", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = value, style = MaterialTheme.typography.bodyLarge)
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun CountryDetailsContentPreview() {
-    val sampleCountry = CountryResponse(
+    val sampleCountry = CountryDetailsResponse(
         name = "Sampleland",
         flag = "https://flagcdn.com/w320/br.svg",
         capital = "Sample City",
         population = 1234567
     )
-    val state = DetailsUiState.Success(sampleCountry)
-    val navController = rememberNavController()
+    val sampleState = DetailsScreenState(
+        countryName = sampleCountry.name,
+        uiState = DetailsUiState.Success(sampleCountry)
+    )
 
     CountryDetailsContent(
-        state = state,
-        navController = navController,
-        countryName = sampleCountry.name
+        state = sampleState
     )
 }

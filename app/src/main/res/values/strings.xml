@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Flag Explorer</string>
+
+    <!-- Home -->
+    <string name="error_failed_to_load">Failed to load countries: %1$s</string>
+
+    <!-- Details -->
+    <string name="details_row_capital_title">Capital</string>
+    <string name="details_row_population_title">Population</string>
 </resources>

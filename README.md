@@ -104,5 +104,42 @@ This project is licensed under the MIT License.
 - Jetpack Compose
 - Coil
 
+## Firebase App Distribution
+Firebase App Distribution is used to deliver debug builds of the app to testers quickly and securely.
+
+How it Works
+Every push to the master branch triggers a GitHub Actions CI pipeline.
+
+The pipeline builds the debug APK.
+
+The built APK is uploaded to Firebase App Distribution.
+
+Testers receive an email with a link to download and install the app.
+
+Configuration (CI/CD)
+The Firebase distribution step is defined in .github/workflows/android-ci.yml using the wzieba/Firebase-Distribution-Github-Action action.
+
+yaml
+Copy
+Edit
+- name: Distribute APK via Firebase App Distribution
+  uses: wzieba/Firebase-Distribution-Github-Action@v1
+  with:
+  appId: ${{ secrets.FIREBASE_APP_ID }}
+  token: ${{ secrets.FIREBASE_TOKEN }}
+  groups: testers
+  file: app/build/outputs/apk/debug/app-debug.apk
+  Testers
+  Testers must be invited via Firebase Console or added to the tester group (testers).
+
+They will receive an email with instructions to install the app via Firebase App Tester.
+
+Secrets Required
+In your GitHub repository, make sure the following secrets are configured under Settings > Secrets and variables > Actions:
+
+FIREBASE_APP_ID – Found in Firebase project settings.
+
+FIREBASE_TOKEN – Generated using firebase login:ci on your local machine.
+
 ## Author
 Built by Sashen Govender

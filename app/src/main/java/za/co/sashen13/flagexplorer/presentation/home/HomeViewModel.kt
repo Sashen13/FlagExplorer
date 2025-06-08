@@ -16,24 +16,34 @@ class HomeViewModel(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
-    val uiState: StateFlow<HomeUiState> = _uiState
+    private val _screenState = MutableStateFlow(
+        HomeScreenState(
+            uiState = HomeUiState.Loading
+        )
+    )
+    val screenState: StateFlow<HomeScreenState> = _screenState
 
     init {
         fetchCountries()
     }
 
-    private fun fetchCountries() {
+     fun fetchCountries() {
         viewModelScope.launch(ioDispatcher) {
             when(val response = getAllCountriesUseCase.execute()) {
                 is NetworkResult.Error ->  {
-                    _uiState.value = HomeUiState.Error(response.message ?: "Unknown error")
+                    _screenState.value = _screenState.value.copy(
+                        uiState = HomeUiState.Error(response.message ?: "Something went wrong")
+                    )
                 }
                 is NetworkResult.Exception ->  {
-                    _uiState.value = HomeUiState.Error(response.e.message ?: "Unknown error")
+                    _screenState.value = _screenState.value.copy(
+                        uiState = HomeUiState.Error(response.e.message ?: "Something went wrong")
+                    )
                 }
                 is NetworkResult.Success ->  {
-                    _uiState.value = HomeUiState.Success(response.body)
+                    _screenState.value = _screenState.value.copy(
+                        uiState = HomeUiState.Success(response.body)
+                    )
                 }
             }
         }
@@ -45,3 +55,7 @@ sealed class HomeUiState {
     data class Success(val countries: List<CountryResponse>) : HomeUiState()
     data class Error(val message: String) : HomeUiState()
 }
+
+data class HomeScreenState(
+    val uiState: HomeUiState
+)

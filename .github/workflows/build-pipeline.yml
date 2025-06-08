@@ -24,6 +24,11 @@ jobs:
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
+      - name: Decode google-services.json from Secret
+        run: |
+          mkdir -p app/src/debug
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 --decode > app/src/debug/google-services.json
+
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 

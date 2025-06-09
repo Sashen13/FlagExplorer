@@ -59,6 +59,45 @@ To run tests:
 
 ---
 
+## UI Integration Tests
+The project includes Jetpack Compose UI integration tests for critical user flows like loading states, error handling, and data rendering on key screens.
+
+## Covered Screens
+HomeScreen
+
+Displays loading spinner
+
+Shows country flag grid on success
+
+Displays error message and retry button
+
+DetailScreen
+
+Displays loading spinner
+
+Shows detailed country info (name, capital, population)
+
+Handles error and allows retry
+
+## Tools Used
+Jetpack Compose Testing
+
+AndroidX Test & JUnit
+
+Espresso (for base instrumentation support)
+
+## Testing Conventions
+Each composable includes Modifier.testTag() on key UI elements for reliable querying during tests.
+
+## Running Tests
+Use Android Studio or run from terminal:
+
+./gradlew connectedDebugAndroidTest
+
+Alternatively, right click on androidTest and run all tests
+
+---
+
 ## Getting started
 
 ### Prerequisites
